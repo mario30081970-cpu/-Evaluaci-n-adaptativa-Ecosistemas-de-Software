@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Evaluación Dinámica · Ecosistemas de Software · Banco 40 preguntas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2ff 0%, #fef7e0 100%);
+            font-family: 'Inter', 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+
+        .exam-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(1px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35);
+            padding: 1.8rem;
+            transition: all 0.2s;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 4px solid #f39c12;
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #1a5f7a, #e67e22);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .badge-pool {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            background: #ede7f6;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            border: none;
+            font-weight: 700;
+            padding: 0.65rem 1.5rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: #1e6f9f;
+            color: white;
+        }
+        .btn-primary:hover { background: #0f5a84; transform: scale(1.02); }
+
+        .btn-warning {
+            background: #e67e22;
+            color: white;
+        }
+        .btn-warning:hover { background: #d35400; }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-success:hover { background: #1e8449; }
+
+        .score-panel {
+            background: #fef5e7;
+            border-radius: 1.2rem;
+            padding: 0.7rem 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            font-weight: 700;
+            border-left: 6px solid #f39c12;
+        }
+
+        .questions-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+            border-left: 8px solid #3498db;
+            transition: all 0.1s;
+        }
+
+        .question-card.correct-highlight {
+            border-left-color: #2ecc71;
+            background: #f0fff4;
+        }
+        .question-card.incorrect-highlight {
+            border-left-color: #e74c3c;
+            background: #fff6f5;
+        }
+
+        .q-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #1e2a47;
+            margin-bottom: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin: 0.8rem 0 0.5rem 0;
+        }
+
+        .opt-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding: 0.5rem 0.8rem;
+            border-radius: 1rem;
+            background: #fefaf5;
+            border: 1.5px solid #e2dcd5;
+            transition: 0.1s;
+        }
+        .opt-item:hover {
+            background: #fff3e8;
+            border-color: #f39c12;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #e67e22;
+            border-radius: 50%;
+            margin-top: 0.15rem;
+            background: white;
+            flex-shrink: 0;
+        }
+        input[type="radio"]:checked {
+            background-color: #e67e22;
+            box-shadow: inset 0 0 0 3px white;
+            border-color: #e67e22;
+        }
+
+        .opt-item label {
+            font-weight: 500;
+            font-size: 0.93rem;
+            line-height: 1.4;
+            color: #2c3e66;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .results-area {
+            margin-top: 1.8rem;
+            background: #fff7e8;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 2px solid #ffb347;
+            display: none;
+        }
+        .results-area h3 {
+            color: #b45f06;
+            margin-bottom: 0.5rem;
+        }
+        .result-summary {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        .result-detail {
+            max-height: 260px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+        .result-item {
+            padding: 0.3rem;
+            border-bottom: 1px solid #ffdd99;
+            display: flex;
+            gap: 8px;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 1.5rem;
+            color: #b38f5a;
+        }
+
+        @media (max-width: 700px) {
+            .exam-container { padding: 1rem; }
+            .q-text { font-size: 0.95rem; }
+            .btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="exam-container">
+    <div class="header">
+        <h1>🧩 Evaluación adaptativa · Ecosistemas de Software</h1>
+        <div style="font-size:0.8rem; color:#e67e22;">Banco de 40 preguntas (Arquitectura + Gestión Educativa) | 10 preguntas aleatorias por examen</div>
+    </div>
+
+    <div class="badge-pool">
+        <span>📚 Banco total: <strong>40 preguntas</strong></span>
+        <span>🎲 Examen actual: <strong id="examLengthDisplay">10 preguntas</strong></span>
+        <span>🔄 Opciones mezcladas en cada versión → evita memorización</span>
+    </div>
+
+    <div class="action-bar">
+        <button id="newRandomExamBtn" class="btn btn-primary">🎲 Nuevo examen (10 preguntas)</button>
+        <button id="reshuffleOptionsBtn" class="btn btn-warning">🔀 Mezclar opciones (mismas preguntas)</button>
+        <button id="gradeExamBtn" class="btn btn-success">✅ Corregir y puntuar</button>
+    </div>
+
+    <div class="score-panel" id="liveStatsPanel">
+        <span>📋 Respuestas registradas: <span id="answeredCount">0</span> / <span id="totalQuestionsDisplay">10</span></span>
+        <span>⭐ Puntuación actual: <span id="currentScorePreview">0</span> pts</span>
+        <span>🎯 Cada acierto = 1 punto (máx 10)</span>
+    </div>
+
+    <div id="questionsRenderArea" class="questions-grid">
+        <div style="text-align:center; padding:2rem;">Cargando evaluación...</div>
+    </div>
+
+    <div id="resultsPanel" class="results-area"></div>
+    <footer>📌 Selecciona una opción por pregunta. <strong>Nuevo examen</strong> elige 10 preguntas distintas del banco. <strong>Mezclar opciones</strong> reordena las alternativas sin cambiar las preguntas. Al corregir se muestra puntuación y aciertos/fallos.</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // BANCO DE 40 PREGUNTAS (unión de los dos cuestionarios)
+    // --------------------------------------------------------------
+    // 1. Arquitectura de Ecosistemas de Software (20 preguntas)
+    const arquitecturaQuestions = [
+        { text: "Durante un análisis forense, se observa que un proceso tiene autoridad para organizar los hilos de ejecución directamente en la CPU. ¿A qué capa pertenece este proceso según la jerarquía de dependencia?",
+          options: ["Capa de Aplicaciones (Interfaz de Usuario).", "Capa de Utilitarios (Perímetro de Mantenimiento).", "Capa de Software de Base (Motor del Sistema).", "Capa de Hardware (Drivers físicos)."],
+          correctLetter: "c" },
+        { text: "Si un sistema operativo inicia correctamente pero el usuario no puede realizar copias de seguridad automáticas ni detectar malware en tiempo real, ¿qué segmento de la arquitectura está fallando?",
+          options: ["El Software de Base, debido a una corrupción en el Kernel.", "Los Utilitarios, ya que estas funciones son de mantenimiento y protección.", "Las Aplicaciones, porque el usuario no puede ejecutar su voluntad final.", "El Hardware, específicamente el Chip de Seguridad."],
+          correctLetter: "b" },
+        { text: "En el 'Anatomía de un Clic', un algoritmo comprime un archivo antes de enviarlo. Si este paso falla pero el sistema operativo sigue asignando CPU con normalidad, ¿cuál es el diagnóstico técnico?",
+          options: ["Colapso de la base; el hardware no puede recibir instrucciones.", "Falla en la capa de aplicación; la voluntad del usuario fue ignorada.", "Interrupción en la capa de utilitarios; el servicio de optimización falló.", "Error de driver; la tarjeta Wi-Fi no reconoce el formato comprimido."],
+          correctLetter: "c" },
+        { text: "¿Por qué el cierre forzado de `explorer.exe` en Windows provoca el colapso de la interfaz gráfica pero no el apagado del equipo?",
+          options: ["Porque es un proceso de aplicación que consume recursos de forma masiva.", "Porque es un proceso del Software de Base del cual depende la interfaz visible.", "Porque es un utilitario de gestión de disco que se detuvo.", "Porque el Kernel NT detecta un error de hardware y bloquea la pantalla."],
+          correctLetter: "b" },
+        { text: "Un técnico observa que la CPU está al 100% de uso mientras se realiza una desfragmentación de disco, pero vuelve a la normalidad al terminar. Según el material, esto es un comportamiento esperado de:",
+          options: ["El Kernel, que mantiene un control constante y absoluto.", "Una Aplicación de finanzas con alta penetración de datos.", "Un Utilitario, que estresa el hardware bajo demanda para optimizar.", "El Chip de Seguridad validando permisos de acceso."],
+          correctLetter: "c" },
+        { text: "Si eliminamos el componente `systemd` en un entorno Linux, ¿cuál sería el resultado según el 'Test del Fallo'?",
+          options: ["El sistema funciona lento pero protegido.", "El equipo no arranca (Fallo Crítico).", "El usuario no puede realizar una tarea específica como navegar.", "Se pierden las funciones de compresión de archivos."],
+          correctLetter: "b" },
+        { text: "¿Cuál es la diferencia fundamental de 'autoridad' entre un navegador web y el Kernel de un sistema?",
+          options: ["El navegador gestiona el sistema y el Kernel lo consume.", "El Kernel es el intermediario absoluto con el hardware; el navegador es la interfaz que consume el sistema.", "Los navegadores tienen más autoridad por estar en la cúspide de la pirámide.", "El Kernel solo se encarga de la seguridad, mientras que el navegador organiza los hilos de CPU."],
+          correctLetter: "b" },
+        { text: "En la arquitectura de dependencia, si la base colapsa:",
+          options: ["Los utilitarios asumen el control del hardware para evitar el cierre.", "Las aplicaciones siguen funcionando de forma independiente en la memoria caché.", "La cúspide (aplicaciones y utilitarios) se derrumba inevitablemente.", "El chip de seguridad reinicia automáticamente el Kernel."],
+          correctLetter: "c" },
+        { text: "Al instalar un nuevo periférico, el sistema coordina su funcionamiento mediante drivers. ¿En qué sección del Software de Base ocurre esto?",
+          options: ["Gestión de Memoria RAM.", "Puertos E/S (Entrada/Salida).", "Sistema de Archivos de Almacenamiento.", "Organización de hilos de la CPU."],
+          correctLetter: "b" },
+        { text: "Un programa se ejecuta pasivamente en segundo plano consumiendo 0.1 Mbps de red de forma constante. Según el Laboratorio 1, este comportamiento es típico de:",
+          options: ["Una Aplicación de entretenimiento.", "El Kernel NT en estado de reposo.", "Un Servicio/Utilitario operando de forma pasiva.", "El hardware de red enviando señales de pulso."],
+          correctLetter: "c" },
+        { text: "¿Qué característica distingue a un 'Utilitario' de una 'Aplicación' en términos de la voluntad del usuario?",
+          options: ["El utilitario ejecuta la voluntad final; la aplicación solo mantiene el sistema.", "La aplicación ejecuta la voluntad final del usuario; el utilitario mantiene, protege y optimiza.", "Ambos ejecutan la voluntad final, pero el utilitario tiene acceso directo al hardware.", "No hay diferencia; ambos son términos intercambiables en sistemas modernos."],
+          correctLetter: "b" },
+        { text: "Si un disco duro está dañado físicamente y se utiliza una herramienta para analizar y reparar unidades, ¿qué capa de software se está empleando?",
+          options: ["Software de Base, porque accede al disco.", "Utilitarios, específicamente en su función de Gestión de Disco.", "Aplicaciones de productividad.", "Capa de Hardware pura, sin intervención de software."],
+          correctLetter: "b" },
+        { text: "Un sistema muestra un mensaje de 'Acceso Denegado' al intentar modificar una carpeta del sistema. ¿Qué componente de la Capa 1 está actuando?",
+          options: ["Organización de hilos de ejecución.", "Gestión de memoria RAM.", "Chip de Seguridad / Control de permisos.", "Drivers de almacenamiento."],
+          correctLetter: "c" },
+        { text: "Según la metodología de laboratorio, para comprender el impacto de un software en un entorno real, el paso de 'Práctica' consiste en:",
+          options: ["Explicar la función estructural.", "Identificar el software en una lista.", "Alterar variables y observar el impacto.", "Leer las conclusiones y próximas fronteras."],
+          correctLetter: "c" },
+        { text: "En el ecosistema Android, ¿cuál de los siguientes es el componente de Software de Base?",
+          options: ["AVG Mobile.", "Instagram.", "Linux Kernel.", "WhatsApp."],
+          correctLetter: "c" },
+        { text: "¿Qué sucede con el hardware si se elimina por completo la Capa 1 (Software de Base)?",
+          options: ["El hardware opera de forma básica mediante la BIOS.", "El hardware queda inerte.", "Los utilitarios toman el control de los puertos E/S.", "Las aplicaciones acceden directamente a la CPU."],
+          correctLetter: "b" },
+        { text: "Un usuario reporta que no puede enviar un correo porque el archivo adjunto es muy grande. El técnico sugiere usar una herramienta de compresión. ¿Qué está recomendando el técnico en términos de capas?",
+          options: ["Mejorar la Capa 1 para que el Kernel asigne más memoria.", "Utilizar un componente de la Capa 2 para reducir el tamaño del archivo.", "Instalar una nueva Capa 3 para cambiar la interfaz de usuario.", "Reemplazar el hardware para aumentar la capacidad de red."],
+          correctLetter: "b" },
+        { text: "En el Administrador de Tareas, las aplicaciones suelen encabezar la lista de consumo de recursos. ¿A qué se debe esto según el material?",
+          options: ["A que son las encargadas de gestionar el sistema.", "A que son la capa más visible y consumen el sistema para cumplir la voluntad del usuario.", "A que contienen los drivers necesarios para el hardware.", "A un error de prioridad en el Software de Base."],
+          correctLetter: "b" },
+        { text: "¿Cuál es el orden jerárquico estricto de programas que se inicia al encender un dispositivo?",
+          options: ["Aplicación -> Utilitario -> Software de Base.", "Software de Base -> Utilitario -> Aplicación.", "Utilitario -> Software de Base -> Aplicación.", "El orden es aleatorio dependiendo de la velocidad del procesador."],
+          correctLetter: "b" },
+        { text: "Si un técnico desea crear entornos seguros para probar otros Sistemas Operativos, ¿cuál es el siguiente paso sugerido por el material?",
+          options: ["Usar Terminal Linux para borrar el Kernel.", "Configurar Máquinas Virtuales.", "Instalar nuevos Utilitarios de Red.", "Comprimir el sistema de archivos actual."],
+          correctLetter: "b" }
+    ];
+
+    // 2. Gestión Táctica de Software Educativo (20 preguntas)
+    const gestionQuestions = [
+        { text: "Durante la fase de planificación, se identifica que un nuevo instalador educativo pesa 5 GB. Según los estándares de la fuente, ¿qué espacio libre en disco debe tener el equipo antes de iniciar el proceso para evitar fallos de descompresión o archivos temporales?",
+          options: ["5 GB, lo justo para alojar el archivo de instalación.", "10 GB, previendo un margen de seguridad del 100%.", "15 GB, ya que el proceso de instalación puede triplicar el peso original.", "64 GB, que es el requisito mínimo absoluto de Windows 11."],
+          correctLetter: "c" },
+        { text: "Una escuela necesita ejecutar un software de laboratorio antiguo que depende de una versión específica de Java incompatible con el sistema actual. El software no requiere un sistema operativo completo diferente, pero sí un entorno aislado y rápido de iniciar. ¿Cuál es la estrategia recomendada?",
+          options: ["Máquina Virtual (VM) con VirtualBox.", "Contenedores (Docker).", "Versión Portable desde USB.", "Instalación nativa forzando la coexistencia de librerías."],
+          correctLetter: "b" },
+        { text: "Se detecta una alta tasa de ataques internos en la red escolar. Al revisar las plantillas de despliegue JSON, ¿qué configuración técnica ayuda simultáneamente a reducir el consumo de recursos y cerrar vectores de ataque?",
+          options: ["Habilitar actualizaciones automáticas a las 02:00.", "Deshabilitar servicios como 'Bluetooth' y 'Print Spooler'.", "Configurar el Firewall para permitir solo tráfico entrante.", "Bloquear los permisos de lectura a los docentes."],
+          correctLetter: "b" },
+        { text: "Un administrador decide implementar una actualización masiva. Siguiendo el protocolo de ejecución seguro, ¿cuál es el procedimiento correcto para el despliegue final?",
+          options: ["Instalar en todos los equipos simultáneamente durante el fin de semana.", "Actualizar el 10% de los equipos y monitorear durante 48 horas.", "Desplegar en los equipos de los docentes primero para validar errores.", "Instalar solo en equipos con Windows 11 para asegurar compatibilidad."],
+          correctLetter: "b" },
+        { text: "Al diseñar un flujo de datos para la importación de calificaciones, ¿por qué se recomienda el uso de archivos CSV/UTF-8 sobre formatos como XLSX?",
+          options: ["Para garantizar la compatibilidad si la escuela utiliza software libre.", "Porque el formato XLSX no permite la validación de reglas de longitud.", "Porque los archivos CSV se convierten automáticamente a PDF/A.", "Para evitar que los usuarios editen los datos manualmente."],
+          correctLetter: "a" },
+        { text: "Se presenta inestabilidad en el sistema tras instalar una suite de diseño moderna en equipos que ya tenían software heredado. ¿Cuál es la causa técnica probable según la 'Amenaza de la Coexistencia'?",
+          options: ["Falta de espacio en el sector de arranque.", "Conflictos en el Registro y versiones incompatibles de .NET/Java.", "El firewall bloqueando las actualizaciones del software antiguo.", "Insuficiencia de núcleos en la CPU para procesos de fondo."],
+          correctLetter: "b" },
+        { text: "Un docente reporta que el navegador se cierra al abrir múltiples pestañas de investigación. El equipo tiene 4 GB de RAM. Según los requisitos del sistema, ¿cuál es el diagnóstico técnico?",
+          options: ["El procesador de 1 GHz es insuficiente para la web moderna.", "Se requiere una instalación limpia de Windows 11 de 64 bits.", "El navegador consume entre 2-4 GB, dejando al sistema sin memoria operativa.", "El espacio en disco es inferior a los 100 GB recomendados."],
+          correctLetter: "c" },
+        { text: "¿Cuál es la ventaja táctica principal de utilizar una plantilla de automatización (JSON/INI) en lugar de configuraciones manuales?",
+          options: ["Permite que los estudiantes modifiquen el sistema bajo supervisión.", "Elimina el error humano, facilita la auditoría y permite un rollback rápido.", "Aumenta la velocidad de descarga de los instaladores .MSI.", "Garantiza que el hardware se actualice automáticamente."],
+          correctLetter: "b" },
+        { text: "Al administrar un ecosistema basado en Linux (Ubuntu/Fedora), ¿cuáles son los componentes críticos que deben gestionarse para asegurar la compatibilidad de software como GCompris?",
+          options: ["Modificaciones en el Registry y dependencias .NET Framework.", "Gestión de dispositivos (MDM) y arquitectura ARM.", "Repositorios correctos y permisos SELinux/AppArmor.", "Instaladores .EXE y bloqueos de antivirus de terceros."],
+          correctLetter: "c" },
+        { text: "En la 'Regla de Oro' de los planes de contingencia, ¿cuál es la diferencia crítica entre un Backup Completo y un Punto de Restauración?",
+          options: ["El backup es nativo de Windows y el punto de restauración es externo.", "El backup copia sistema y datos; el punto de restauración permite volver al estado anterior en minutos mediante herramientas nativas.", "El punto de restauración requiere hardware de Macrium Reflect.", "El backup es solo para archivos .JSON y el punto de restauración para .MSI."],
+          correctLetter: "b" },
+        { text: "El sistema de logs de importación muestra el mensaje: 'Error: columna fecha incorrecta (Use DD/MM/AAAA)'. ¿Cuál es el objetivo táctico de este log detallado?",
+          options: ["Automatizar la corrección de la base de datos sin intervención.", "Empoderar al usuario para que corrija el error por sí mismo y reducir tickets de soporte.", "Bloquear el acceso del usuario al sistema de forma permanente.", "Generar una alerta inmediata al administrador de red."],
+          correctLetter: "b" },
+        { text: "Según la Matriz de Riesgos, un 'Conflicto de Dependencias' tiene un impacto medio pero una probabilidad baja. ¿Cuál es la mitigación técnica recomendada?",
+          options: ["Realizar backups automáticos bajo la regla 3-2-1.", "Mantener un inventario estricto de runtimes y no instalar 'la última versión' por defecto.", "Realizar pruebas exhaustivas solo en los equipos de los docentes.", "Reinstalar el sistema operativo cada vez que ocurra un conflicto."],
+          correctLetter: "b" },
+        { text: "Un equipo Windows no puede ejecutar una aplicación educativa. Al revisar la matriz diagnóstica, se observa que falta una dependencia que modifica el Registry. ¿A qué componente se refiere probablemente?",
+          options: ["SELinux.", "Visual C++ o .NET Framework.", "Arquitectura ARM.", "Gestor de paquetes apt/dnf."],
+          correctLetter: "b" },
+        { text: "Una escuela desea adquirir software de diseño arquitectónico. ¿Qué especificación técnica de CPU es indispensable según la lista de verificación pre-vuelo?",
+          options: ["Un procesador de 64 bits a exactamente 1 GHz.", "Un procesador con múltiples núcleos.", "Cualquier procesador compatible con Linux Ubuntu.", "Un procesador que no requiera ventilación activa."],
+          correctLetter: "b" },
+        { text: "Durante el protocolo de ejecución, el paso 04 es 'Descargar'. ¿Qué acción técnica adicional es vital en este paso para garantizar la integridad del archivo?",
+          options: ["Documentar la versión en una hoja de cálculo.", "Verificar el Hash del archivo descargado desde la fuente oficial.", "Instalarlo inmediatamente en una máquina virtual.", "Comprobar si el equipo tiene Windows 11."],
+          correctLetter: "b" },
+        { text: "Se requiere probar una aplicación que realiza cambios profundos en la configuración, pero solo se usará una vez para un examen específico. ¿Qué opción de aislamiento no modifica el registro del sistema?",
+          options: ["Máquina Virtual.", "Contenedores Docker.", "Versiones Portables (ejecución desde USB).", "Instalación mediante .MSI en modo pasivo."],
+          correctLetter: "c" },
+        { text: "En una configuración de seguridad por defecto, ¿cuál debe ser la política de permisos para los estudiantes en las carpetas de recursos?",
+          options: ["Acceso total para fomentar la exploración tecnológica.", "Permisos estrictos de solo lectura, con bloqueo de modificación del sistema.", "Acceso de escritura solo durante el horario escolar.", "Permisos iguales a los del personal docente."],
+          correctLetter: "b" },
+        { text: "Para la preservación a largo plazo de boletines y certificados escolares, ¿qué estándar de archivo se debe utilizar según el flujo de datos?",
+          options: ["PDF estándar con contraseña.", "CSV con codificación UTF-8.", "PDF/A (Estándar ISO).", "Capturas de pantalla en formato .PNG."],
+          correctLetter: "c" },
+        { text: "¿Cuál es la consecuencia directa de una 'Mala Instalación' a nivel de infraestructura escolar según el efecto dominó?",
+          options: ["Mejora de las habilidades técnicas de los docentes.", "Pérdida de tiempo de clase y frustración del personal docente.", "Aumento del presupuesto para hardware nuevo.", "Reducción de la carga de trabajo del soporte técnico."],
+          correctLetter: "b" },
+        { text: "Según el plan de acción táctico, ¿qué tarea debe priorizarse durante la primera semana de gestión?",
+          options: ["Implementar una política de backups en la nube.", "Desarrollar la primera plantilla JSON de automatización.", "Auditar y crear la Ficha de Compatibilidad para todos los modelos de equipos actuales.", "Migrar todos los sistemas a Linux para evitar virus."],
+          correctLetter: "c" }
+    ];
+
+    // Unir ambos bancos
+    const MASTER_BANK = [...arquitecturaQuestions, ...gestionQuestions];
+    console.assert(MASTER_BANK.length === 40, "El banco debe tener 40 preguntas");
+
+    // Enriquecer cada pregunta con el texto correcto de la opción
+    function enrichWithCorrectText(q) {
+        const letters = ['a', 'b', 'c', 'd'];
+        const idx = letters.indexOf(q.correctLetter);
+        const correctText = q.options[idx];
+        return { ...q, correctAnswerText: correctText };
+    }
+
+    const enrichedBank = MASTER_BANK.map(q => enrichWithCorrectText(q));
+
+    // ----- ESTADO GLOBAL -----
+    let currentExamQuestions = [];        // { base, shuffledOptions, correctAnswerText }
+    let userSelections = [];
+    let graded = false;
+
+    const renderArea = document.getElementById('questionsRenderArea');
+    const newExamBtn = document.getElementById('newRandomExamBtn');
+    const reshuffleBtn = document.getElementById('reshuffleOptionsBtn');
+    const gradeBtn = document.getElementById('gradeExamBtn');
+    const answeredSpan = document.getElementById('answeredCount');
+    const previewScoreSpan = document.getElementById('currentScorePreview');
+    const totalQSpan = document.getElementById('totalQuestionsDisplay');
+    const resultsPanelDiv = document.getElementById('resultsPanel');
+
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function selectRandomQuestions(n) {
+        const shuffled = shuffleArray([...enrichedBank]);
+        return shuffled.slice(0, n);
+    }
+
+    function buildShuffledVersion(baseQ) {
+        const shuffledOpts = shuffleArray([...baseQ.options]);
+        return {
+            base: baseQ,
+            shuffledOptions: shuffledOpts,
+            correctAnswerText: baseQ.correctAnswerText
+        };
+    }
+
+    function generateBrandNewExam() {
+        const randomQs = selectRandomQuestions(10);
+        currentExamQuestions = randomQs.map(q => buildShuffledVersion(q));
+        userSelections = new Array(10).fill(null);
+        graded = false;
+        resultsPanelDiv.style.display = 'none';
+        renderExam();
+        updateStats();
+    }
+
+    function reshuffleCurrentOptions() {
+        if (!currentExamQuestions.length) return;
+        currentExamQuestions = currentExamQuestions.map(item => {
+            const freshShuffle = shuffleArray([...item.base.options]);
+            return {
+                base: item.base,
+                shuffledOptions: freshShuffle,
+                correctAnswerText: item.base.correctAnswerText
+            };
+        });
+        userSelections = new Array(10).fill(null);
+        graded = false;
+        resultsPanelDiv.style.display = 'none';
+        renderExam();
+        updateStats();
+    }
+
+    function updateStats() {
+        const answered = userSelections.filter(s => s !== null).length;
+        answeredSpan.textContent = answered;
+        let preview = 0;
+        for (let i = 0; i < currentExamQuestions.length; i++) {
+            if (userSelections[i] && userSelections[i] === currentExamQuestions[i].correctAnswerText) preview++;
+        }
+        previewScoreSpan.textContent = preview;
+    }
+
+    function handleAnswerChange(qIndex, selectedText) {
+        userSelections[qIndex] = selectedText;
+        graded = false;
+        resultsPanelDiv.style.display = 'none';
+        updateStats();
+        renderExam();
+    }
+
+    function gradeAndShowResults() {
+        if (!currentExamQuestions.length) return;
+        let correctCount = 0;
+        const details = [];
+        for (let i = 0; i < currentExamQuestions.length; i++) {
+            const userOpt = userSelections[i];
+            const isCorrect = (userOpt && userOpt === currentExamQuestions[i].correctAnswerText);
+            if (isCorrect) correctCount++;
+            const status = isCorrect ? '✅' : '❌';
+            const userShow = userOpt ? (userOpt.length > 60 ? userOpt.substring(0,60)+'…' : userOpt) : '—';
+            const correctShow = currentExamQuestions[i].correctAnswerText.length > 60 ? currentExamQuestions[i].correctAnswerText.substring(0,60)+'…' : currentExamQuestions[i].correctAnswerText;
+            details.push(`${status} Pregunta ${i+1}: Tu respuesta: ${userShow} | Correcta: ${correctShow}`);
+        }
+        const percent = Math.round((correctCount/10)*100);
+        resultsPanelDiv.innerHTML = `
+            <h3>📋 Resultado oficial</h3>
+            <div class="result-summary">🎯 Aciertos: ${correctCount} de 10 (${percent}%) → Puntuación: ${correctCount} punto(s)</div>
+            <div class="result-detail">${details.map(d => `<div class="result-item">${d}</div>`).join('')}</div>
+            <button id="closeResultsBtn" style="margin-top:12px; background:#e67e22; color:white; border:none; padding:6px 16px; border-radius:40px; cursor:pointer;">✖ Cerrar resumen</button>
+        `;
+        resultsPanelDiv.style.display = 'block';
+        document.getElementById('closeResultsBtn')?.addEventListener('click', () => {
+            resultsPanelDiv.style.display = 'none';
+        });
+        graded = true;
+        renderExam();
+    }
+
+    function renderExam() {
+        if (!currentExamQuestions.length) {
+            renderArea.innerHTML = '<div style="padding:2rem; text-align:center;">⚠️ No hay preguntas. Genera un nuevo examen.</div>';
+            return;
+        }
+        let html = '';
+        for (let i = 0; i < currentExamQuestions.length; i++) {
+            const qData = currentExamQuestions[i];
+            const selected = userSelections[i];
+            const isGradedCorrect = (graded && selected === qData.correctAnswerText);
+            const isGradedWrong = (graded && selected !== null && selected !== qData.correctAnswerText);
+            let addClass = '';
+            if (graded && isGradedCorrect) addClass = 'correct-highlight';
+            if (graded && isGradedWrong) addClass = 'incorrect-highlight';
+
+            html += `<div class="question-card ${addClass}" data-qidx="${i}">
+                        <div class="q-text">${i+1}. ${escapeHtml(qData.base.text)}</div>
+                        <div class="options-list">`;
+            for (let optIdx = 0; optIdx < qData.shuffledOptions.length; optIdx++) {
+                const optText = qData.shuffledOptions[optIdx];
+                const radioId = `q_${i}_opt_${optIdx}`;
+                const isChecked = (selected === optText);
+                const prefix = String.fromCharCode(65+optIdx);
+                html += `<div class="opt-item" data-opt-text="${escapeHtml(optText)}">
+                            <input type="radio" name="question_${i}" id="${radioId}" value="${escapeHtml(optText)}" ${isChecked ? 'checked' : ''}>
+                            <label for="${radioId}"><strong>${prefix}.</strong> ${escapeHtml(optText)}</label>
+                         </div>`;
+            }
+            if (graded && selected && selected !== qData.correctAnswerText) {
+                html += `<div style="font-size:0.75rem; margin-top:8px; color:#e74c3c;">⚠️ Incorrecto. Respuesta correcta: ${escapeHtml(qData.correctAnswerText)}</div>`;
+            } else if (graded && selected && selected === qData.correctAnswerText) {
+                html += `<div style="font-size:0.75rem; margin-top:8px; color:#2ecc71;">✓ Correcto (+1 punto)</div>`;
+            } else if (graded && !selected) {
+                html += `<div style="font-size:0.75rem; margin-top:8px; color:#e67e22;">❓ Sin respuesta (0 puntos)</div>`;
+            }
+            html += `</div></div>`;
+        }
+        renderArea.innerHTML = html;
+
+        // Bind eventos
+        for (let i = 0; i < currentExamQuestions.length; i++) {
+            const radios = document.querySelectorAll(`input[name="question_${i}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    handleAnswerChange(i, e.target.value);
+                });
+            });
+            const optDivs = document.querySelectorAll(`.question-card[data-qidx="${i}"] .opt-item`);
+            optDivs.forEach(div => {
+                div.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        const inp = div.querySelector('input');
+                        if (inp && !inp.checked) {
+                            inp.checked = true;
+                            handleAnswerChange(i, inp.value);
+                        }
+                    }
+                });
+            });
+        }
+        totalQSpan.textContent = currentExamQuestions.length;
+        updateStats();
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    newExamBtn.addEventListener('click', () => generateBrandNewExam());
+    reshuffleBtn.addEventListener('click', () => reshuffleCurrentOptions());
+    gradeBtn.addEventListener('click', () => gradeAndShowResults());
+
+    generateBrandNewExam();
+</script>
+</body>
+</html>
